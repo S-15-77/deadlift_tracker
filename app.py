@@ -8,6 +8,7 @@ import cv2
 from PIL import Image, ImageTk 
 from landmarks import landmarks
 
+
 window = tk.Tk()
 window.geometry("480x700")
 window.title("Gym Rep") 
@@ -72,6 +73,7 @@ def detect():
         mp_drawing.DrawingSpec(color=(0,255,0), thickness=2, circle_radius = 2)) 
     try:
         # pass
+        print(current_stage)
         row = np.array([[res.x, res.y, res.z, res.visibility] for res in results.pose_landmarks.landmark]).flatten().tolist()
         X = pd.DataFrame([row], columns = landmarks) 
         bodylang_prob = model.predict_proba(X)[0]
@@ -84,6 +86,7 @@ def detect():
             counter += 1 
     except Exception as e:
         print(e)
+        print("Hello")
         # pass
     img = image[:, :460, :] 
     imgarr = Image.fromarray(img) 
@@ -91,5 +94,8 @@ def detect():
     lmain.imgtk = imgtk 
     lmain.configure(image=imgtk)
     lmain.after(10, detect) 
+    counterBox.configure(text=counter) 
+    probBox.configure(text=bodylang_prob[bodylang_prob.argmax()]) 
+    classBox.configure(text=current_stage) 
 detect()
 window.mainloop()
